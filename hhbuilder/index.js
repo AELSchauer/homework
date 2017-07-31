@@ -134,20 +134,20 @@ Person.prototype.getFormSmoker = function() {
 Person.prototype.addPersonOnTable = function() {
   if(this.age != null && this.relationship != null) {
     var table = document.getElementById('list');
-    var personTableRow = displayTableRow(this.age, this.relationship, this.smoker);
+    var personTableRow = this.buildTableRow();
     table.appendChild(personTableRow);
   }
 }
 
-function displayTableRow(age, relationship, smoker) {
+Person.prototype.buildTableRow = function() {
   var tr = document.createElement("tr");
   var td1 = document.createElement("td");
   var td2 = document.createElement("td");
   var td3 = document.createElement("td");
   var td4 = document.createElement("td");
-  var nodeAge = document.createTextNode(age);
-  var nodeRel = document.createTextNode(relationship);
-  var nodeSmoker = document.createTextNode(smoker);
+  var nodeAge = document.createTextNode(this.age);
+  var nodeRel = document.createTextNode(this.relationship);
+  var nodeSmoker = document.createTextNode(this.smoker);
   var button = document.createElement('button');
   button.innerHTML = 'Remove';
   button.setAttribute('class', 'remove');
