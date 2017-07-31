@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   addButtonClickListener();
   submitButtonClickListener();
   displayMembersTable();
+  submitButtonEnableDisable();
 });
 
 function addButtonClickListener() {
@@ -12,6 +13,7 @@ function addButtonClickListener() {
     event.preventDefault();
     processForm();
     clearForm();
+    submitButtonEnableDisable();
   });
 }
 
@@ -57,6 +59,7 @@ function removeButtonClickListener() {
     if(event.target.getAttribute("class") == "remove") {
       var tr = event.target.parentNode.parentNode;
       tr.parentNode.removeChild(tr)
+      submitButtonEnableDisable();
     }
   });
 }
@@ -213,4 +216,22 @@ function getMembersJSON() {
       return JSON.stringify(member)
     })
   })
+}
+
+function isMemberListed() {
+  var members = getListOfHouseholdMembersFromTable();
+  if(members.length == 0) {
+    return false
+  }else{
+    return true
+  }
+}
+
+function submitButtonEnableDisable() {
+  var submitButton = findSubmitButton();
+  if(isMemberListed()) {
+    submitButton.disabled = false
+  }else{
+    submitButton.disabled = true
+  }
 }
