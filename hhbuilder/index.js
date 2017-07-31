@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(event) {
   addButtonClickListener();
   addHouseholdTable();
+  // submitHousehold();
 });
 
 function addButtonClickListener() {
@@ -22,6 +23,8 @@ function addHouseholdTable() {
 function createTable() {
   var table = document.createElement("table");
   table.setAttribute("id", "members");
+  var thead = document.createElement("thead");
+  var tbody = document.createElement("tbody");
   var tr = document.createElement("tr");
   var th1 = document.createElement("th");
   var th2 = document.createElement("th");
@@ -39,7 +42,9 @@ function createTable() {
   tr.appendChild(th2);
   tr.appendChild(th3);
   tr.appendChild(th4);
-  table.appendChild(tr);
+  thead.appendChild(tr);
+  table.appendChild(thead);
+  table.appendChild(tbody);
   return table
 }
 
@@ -65,19 +70,19 @@ function findSubmitButton() {
 }
 
 function processForm() {
-  var person = getFormInfo();
-  person.addPersonOnTable();
+  var Member = getFormInfo();
+  Member.addMemberOnTable();
 }
 
 function getFormInfo() {
-  var person = new Person();
-  person.getFormAge();
-  person.getFormRelationship();
-  person.getFormSmoker();
-  return person
+  var member = new Member();
+  member.getFormAge();
+  member.getFormRelationship();
+  member.getFormSmoker();
+  return member
 }
 
-function Person() {
+function Member() {
   this.age = null;
   this.relationship = null;
   this.smoker = null;
@@ -89,7 +94,7 @@ function clearForm() {
   document.getElementsByName("smoker")[0].checked = false
 }
 
-Person.prototype.getFormAge = function() {
+Member.prototype.getFormAge = function() {
   var formAge = document.getElementsByName("age")[0].value;
   if(isFormFieldFilledIn(formAge, "Age")) {
     if(isAgeFormFieldValid(formAge)) {
@@ -119,27 +124,28 @@ function isAgeFormFieldValid(formAge) {
   }
 }
 
-Person.prototype.getFormRelationship = function() {
+Member.prototype.getFormRelationship = function() {
   var formRel = document.getElementsByName("rel")[0].value;
   if(isFormFieldFilledIn(formRel, "Relationship")) {
     this.relationship = formRel
   }
 }
 
-Person.prototype.getFormSmoker = function() {
+Member.prototype.getFormSmoker = function() {
   var formSmoker = document.getElementsByName("smoker")[0].checked
   this.smoker = formSmoker
 }
 
-Person.prototype.addPersonOnTable = function() {
+Member.prototype.addMemberOnTable = function() {
   if(this.age != null && this.relationship != null) {
-    var table = document.getElementById("members");
-    var personTableRow = this.buildTableRow();
-    table.appendChild(personTableRow);
+    var table = document.getElementById("members")
+    var tbody = table.getElementsByTagName('tbody')[0];
+    var MemberTableRow = this.buildTableRow();
+    tbody.appendChild(MemberTableRow);
   }
 }
 
-Person.prototype.buildTableRow = function() {
+Member.prototype.buildTableRow = function() {
   var tr = document.createElement("tr");
   var td1 = document.createElement("td");
   var td2 = document.createElement("td");
