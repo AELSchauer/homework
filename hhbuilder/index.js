@@ -1,6 +1,7 @@
 // var host = "https://www.example.com"
 
 document.addEventListener("DOMContentLoaded", function(event) {
+  updateFormValidations();
   addButtonClickListener();
   submitButtonClickListener();
   displayMembersTable();
@@ -65,11 +66,19 @@ function removeButtonClickListener() {
 }
 
 function processForm() {
-  var Member = getFormInfo();
-  Member.addMemberOnTable();
+  if(formValidationsPassed()) {
+    var member = getMemberFromForm();
+    member.addMemberToTable();
+  }
 }
 
-function getFormInfo() {
+function formValidationsPassed() {
+  var formAge = isFormFieldFilledIn("age")
+  var formRel = isFormFieldFilledIn("rel")
+  return formAge && formRel
+}
+
+function getMemberFromForm() {
   var member = new Member();
   member.getFormAge();
   member.getFormRelationship();
@@ -91,28 +100,14 @@ function clearForm() {
 
 Member.prototype.getFormAge = function() {
   var formAge = document.getElementsByName("age")[0].value;
-  if(isFormFieldFilledIn(formAge, "Age")) {
-    if(isAgeFormFieldValid(formAge)) {
-      this.age = parseInt(formAge)
-    }
-  }
+  this.age = formAge
 }
 
-function isFormFieldFilledIn(fieldValue, fieldName) {
-  if(fieldValue == "") {
-    window.alert(fieldName + " is required.")
-    return false
-  }else{
-    return true
-  }
-}
-
-function isAgeFormFieldValid(formAge) {
-  if(isNaN(parseInt(formAge))) {
-    window.alert("Age must be a number.")
-    return false
-  }else if(parseInt(formAge) < 1) {
-    window.alert("Age must be greater than 0.")
+function isFormFieldFilledIn(formFieldName) {
+  var formElement = document.forms[0][formFieldName]
+  if(formElement.value == "") {
+    var label = formElement.previousSibling.textContent.trim()
+    window.alert(label + " is required.")
     return false
   }else{
     return true
@@ -121,9 +116,7 @@ function isAgeFormFieldValid(formAge) {
 
 Member.prototype.getFormRelationship = function() {
   var formRel = document.getElementsByName("rel")[0].value;
-  if(isFormFieldFilledIn(formRel, "Relationship")) {
-    this.relationship = formRel
-  }
+  this.relationship = formRel
 }
 
 Member.prototype.getFormSmoker = function() {
@@ -131,10 +124,10 @@ Member.prototype.getFormSmoker = function() {
   this.smoker = formSmoker
 }
 
-Member.prototype.addMemberOnTable = function() {
+Member.prototype.addMemberToTable = function() {
   if(this.age != null && this.relationship != null) {
     var table = document.getElementById("members")
-    var tbody = table.getElementsByTagName('tbody')[0];
+    var tbody = table.getElementsByTagName("tbody")[0];
     var MemberTableRow = this.buildTableRow();
     tbody.appendChild(MemberTableRow);
   }
@@ -183,9 +176,9 @@ function findSubmitButton() {
 
 function postMembersAJAX(bodyJSON) {
   var text = document.createTextNode(bodyJSON);
-  var oldDebug = document.getElementsByClassName('debug')[0]
-  var newDebug = document.createElement('pre')
-  newDebug.setAttribute('class', 'debug')
+  var oldDebug = document.getElementsByClassName("debug")[0]
+  var newDebug = document.createElement("pre")
+  newDebug.setAttribute("class", "debug")
   newDebug.appendChild(text)
   oldDebug.parentNode.replaceChild(newDebug, oldDebug);
 }
@@ -199,8 +192,8 @@ function postMembersAJAX(bodyJSON) {
 
 function getListOfHouseholdMembersFromTable() {
   var table = document.getElementById("members");
-  var tbody = table.getElementsByTagName('tbody')[0];
-  var trs = tbody.getElementsByTagName('tr');
+  var tbody = table.getElementsByTagName("tbody")[0];
+  var trs = tbody.getElementsByTagName("tr");
   var trsArr = [].slice.call(trs);
   var members = trsArr.map(function(tr) {
     var tds = tr.childNodes
@@ -234,4 +227,10 @@ function submitButtonEnableDisable() {
   }else{
     submitButton.disabled = true
   }
+}
+
+function updateFormValidations() {
+  var ageField = document.forms[0]["age"]
+  ageField.setAttribute("type", "number")
+  ageField.setAttribute("min", 1)
 }
