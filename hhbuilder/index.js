@@ -15,7 +15,8 @@ function addButtonClickListener() {
 function addHouseholdTable() {
   var submitButton = findSubmitButton();
   var table = createTable();
-  submitButton.parentNode.insertBefore(table, submitButton)
+  submitButton.parentNode.insertBefore(table, submitButton);
+  removeButtonClickListener();
 }
 
 function createTable() {
@@ -40,6 +41,17 @@ function createTable() {
   tr.appendChild(th4);
   table.appendChild(tr);
   return table
+}
+
+function removeButtonClickListener() {
+  var table = document.getElementById("list");
+  table.addEventListener("click", function(event) {
+    event.preventDefault();
+    if(event.target.getAttribute('class') == 'remove') {
+      var tr = event.target.parentNode.parentNode;
+      tr.parentNode.removeChild(tr)
+    }
+  });
 }
 
 function findSubmitButton() {
@@ -120,9 +132,11 @@ Person.prototype.getFormSmoker = function() {
 }
 
 Person.prototype.addPersonOnTable = function() {
-  var table = document.getElementById('list');
-  var personTableRow = displayTableRow(this.age, this.relationship, this.smoker);
-  table.appendChild(personTableRow);
+  if(this.age != null && this.relationship != null) {
+    var table = document.getElementById('list');
+    var personTableRow = displayTableRow(this.age, this.relationship, this.smoker);
+    table.appendChild(personTableRow);
+  }
 }
 
 function displayTableRow(age, relationship, smoker) {
@@ -134,11 +148,13 @@ function displayTableRow(age, relationship, smoker) {
   var nodeAge = document.createTextNode(age);
   var nodeRel = document.createTextNode(relationship);
   var nodeSmoker = document.createTextNode(smoker);
-  var nodeAction = document.createTextNode('button goes here');
+  var button = document.createElement('button');
+  button.innerHTML = 'Remove';
+  button.setAttribute('class', 'remove');
   td1.appendChild(nodeAge);
   td2.appendChild(nodeRel);
   td3.appendChild(nodeSmoker);
-  td4.appendChild(nodeAction);
+  td4.appendChild(button);
   tr.appendChild(td1);
   tr.appendChild(td2);
   tr.appendChild(td3);
