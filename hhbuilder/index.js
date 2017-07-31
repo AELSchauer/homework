@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function(event) { 
+document.addEventListener("DOMContentLoaded", function(event) {
   addButtonClickListener();
   addHouseholdTable();
 });
@@ -8,6 +8,7 @@ function addButtonClickListener() {
   addButton.addEventListener("click", function(event) {
     event.preventDefault();
     processForm();
+    clearForm();
   });
 }
 
@@ -20,20 +21,24 @@ function addHouseholdTable() {
 function createTable() {
   var table = document.createElement("table");
   table.setAttribute("id", "list");
-  var th = document.createElement("tr");
-  var td1 = document.createElement("th");
-  var td2 = document.createElement("th");
-  var td3 = document.createElement("th");
+  var tr = document.createElement("tr");
+  var th1 = document.createElement("th");
+  var th2 = document.createElement("th");
+  var th3 = document.createElement("th");
+  var th4 = document.createElement("th");
   var age = document.createTextNode("Age");
   var rel = document.createTextNode("Relationship");
   var smoker = document.createTextNode("Smoker?");
-  td1.appendChild(age);
-  td2.appendChild(rel);
-  td3.appendChild(smoker);
-  th.appendChild(td1);
-  th.appendChild(td2);
-  th.appendChild(td3);
-  table.appendChild(th);
+  var action = document.createTextNode("Action");
+  th1.appendChild(age);
+  th2.appendChild(rel);
+  th3.appendChild(smoker);
+  th4.appendChild(action);
+  tr.appendChild(th1);
+  tr.appendChild(th2);
+  tr.appendChild(th3);
+  tr.appendChild(th4);
+  table.appendChild(tr);
   return table
 }
 
@@ -47,10 +52,6 @@ function findSubmitButton() {
   return []
 }
 
-function testMessage() {
-  window.alert("Woohoo");
-}
-
 function processForm() {
   var person = getFormInfo();
   person.addPersonOnTable();
@@ -60,6 +61,7 @@ function getFormInfo() {
   var person = new Person();
   person.getFormAge();
   person.getFormRelationship();
+  person.getFormSmoker();
   return person
 }
 
@@ -67,6 +69,12 @@ function Person() {
   this.age = null;
   this.relationship = null;
   this.smoker = null;
+}
+
+function clearForm() {
+  document.getElementsByName('age')[0].value = ''
+  document.getElementsByName('rel')[0].value = ''
+  document.getElementsByName('smoker')[0].checked = false
 }
 
 Person.prototype.getFormAge = function() {
@@ -106,9 +114,14 @@ Person.prototype.getFormRelationship = function() {
   }
 }
 
+Person.prototype.getFormSmoker = function() {
+  var formSmoker = document.getElementsByName('smoker')[0].checked
+  this.smoker = formSmoker
+}
+
 Person.prototype.addPersonOnTable = function() {
   var table = document.getElementById('list');
-  var personTableRow = displayTableRow("10", "Brother", "WEE");
+  var personTableRow = displayTableRow(this.age, this.relationship, this.smoker);
   table.appendChild(personTableRow);
 }
 
@@ -117,14 +130,18 @@ function displayTableRow(age, relationship, smoker) {
   var td1 = document.createElement("td");
   var td2 = document.createElement("td");
   var td3 = document.createElement("td");
+  var td4 = document.createElement("td");
   var nodeAge = document.createTextNode(age);
   var nodeRel = document.createTextNode(relationship);
   var nodeSmoker = document.createTextNode(smoker);
+  var nodeAction = document.createTextNode('button goes here');
   td1.appendChild(nodeAge);
   td2.appendChild(nodeRel);
   td3.appendChild(nodeSmoker);
+  td4.appendChild(nodeAction);
   tr.appendChild(td1);
   tr.appendChild(td2);
   tr.appendChild(td3);
+  tr.appendChild(td4);
   return tr
 }
