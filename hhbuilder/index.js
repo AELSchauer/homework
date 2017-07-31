@@ -15,7 +15,7 @@ function addButtonClickListener() {
 function addHouseholdTable() {
   var submitButton = findSubmitButton();
   var table = createTable();
-  submitButton.parentNode.insertBefore(table, submitButton);
+  submitButton.parentNode.insertBefore(table, submitButton.nextSibling);
   removeButtonClickListener();
 }
 
