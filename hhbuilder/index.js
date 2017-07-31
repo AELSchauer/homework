@@ -1,3 +1,5 @@
+// var host = "https://www.example.com"
+
 document.addEventListener("DOMContentLoaded", function(event) {
   addButtonClickListener();
   submitButtonClickListener();
@@ -163,7 +165,7 @@ function submitButtonClickListener() {
   submitButton.addEventListener("click", function(event) {
     event.preventDefault();
     var membersJSON = getMembersJSON();
-    submitMembers(membersJSON);
+    postMembersAJAX(membersJSON);
   });
 }
 
@@ -176,7 +178,7 @@ function findSubmitButton() {
   }
 }
 
-function submitMembers(bodyJSON) {
+function postMembersAJAX(bodyJSON) {
   var text = document.createTextNode(bodyJSON);
   var oldDebug = document.getElementsByClassName('debug')[0]
   var newDebug = document.createElement('pre')
@@ -184,6 +186,13 @@ function submitMembers(bodyJSON) {
   newDebug.appendChild(text)
   oldDebug.parentNode.replaceChild(newDebug, oldDebug);
 }
+
+// function postMembersAJAX(bodyJSON) {
+//   var xmlhttp = new XMLHttpRequest();
+//   xmlhttp.open("POST", host + "/members");
+//   xmlhttp.setRequestHeader("Content-Type", "application/json");
+//   xmlhttp.send(bodyJSON);
+// }
 
 function getListOfHouseholdMembersFromTable() {
   var table = document.getElementById("members");
