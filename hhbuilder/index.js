@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function(event) {
   addButtonClickListener();
-  addHouseholdTable();
-  // submitHousehold();
+  // submitButtonClickListener();
+  displayMembersTable();
 });
 
 function addButtonClickListener() {
@@ -13,14 +13,14 @@ function addButtonClickListener() {
   });
 }
 
-function addHouseholdTable() {
-  var submitButton = findSubmitButton();
-  var table = createTable();
-  submitButton.parentNode.insertBefore(table, submitButton.nextSibling);
+function displayMembersTable() {
+  var addButton = document.getElementsByClassName("add")[0];
+  var table = createMembersTable();
+  addButton.parentNode.insertBefore(table, addButton.nextSibling);
   removeButtonClickListener();
 }
 
-function createTable() {
+function createMembersTable() {
   var table = document.createElement("table");
   table.setAttribute("id", "members");
   var thead = document.createElement("thead");
@@ -57,16 +57,6 @@ function removeButtonClickListener() {
       tr.parentNode.removeChild(tr)
     }
   });
-}
-
-function findSubmitButton() {
-  var buttons = document.getElementsByTagName("button");
-  for (var i = 0; i < buttons.length; i++) {
-    if(buttons[i].type == "submit"){
-      return buttons[i]
-    }
-  }
-  return []
 }
 
 function processForm() {
@@ -166,4 +156,13 @@ Member.prototype.buildTableRow = function() {
   tr.appendChild(td3);
   tr.appendChild(td4);
   return tr
+}
+
+function findSubmitButton() {
+  var buttons = document.getElementsByTagName("button");
+  for (var i = 0; i < buttons.length; i++) {
+    if(buttons[i].innerHTML == "submit"){
+      return buttons[i]
+    }
+  }
 }
