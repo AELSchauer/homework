@@ -21,7 +21,7 @@ function addHouseholdTable() {
 
 function createTable() {
   var table = document.createElement("table");
-  table.setAttribute("id", "list");
+  table.setAttribute("id", "members");
   var tr = document.createElement("tr");
   var th1 = document.createElement("th");
   var th2 = document.createElement("th");
@@ -44,10 +44,10 @@ function createTable() {
 }
 
 function removeButtonClickListener() {
-  var table = document.getElementById("list");
+  var table = document.getElementById("members");
   table.addEventListener("click", function(event) {
     event.preventDefault();
-    if(event.target.getAttribute('class') == 'remove') {
+    if(event.target.getAttribute("class") == "remove") {
       var tr = event.target.parentNode.parentNode;
       tr.parentNode.removeChild(tr)
     }
@@ -55,9 +55,9 @@ function removeButtonClickListener() {
 }
 
 function findSubmitButton() {
-  var buttons = document.getElementsByTagName('button');
+  var buttons = document.getElementsByTagName("button");
   for (var i = 0; i < buttons.length; i++) {
-    if(buttons[i].type == 'submit'){
+    if(buttons[i].type == "submit"){
       return buttons[i]
     }
   }
@@ -84,14 +84,14 @@ function Person() {
 }
 
 function clearForm() {
-  document.getElementsByName('age')[0].value = ''
-  document.getElementsByName('rel')[0].value = ''
-  document.getElementsByName('smoker')[0].checked = false
+  document.getElementsByName("age")[0].value = ""
+  document.getElementsByName("rel")[0].value = ""
+  document.getElementsByName("smoker")[0].checked = false
 }
 
 Person.prototype.getFormAge = function() {
-  var formAge = document.getElementsByName('age')[0].value;
-  if(isFormFieldFilledIn(formAge, 'Age')) {
+  var formAge = document.getElementsByName("age")[0].value;
+  if(isFormFieldFilledIn(formAge, "Age")) {
     if(isAgeFormFieldValid(formAge)) {
       this.age = parseInt(formAge)
     }
@@ -99,8 +99,8 @@ Person.prototype.getFormAge = function() {
 }
 
 function isFormFieldFilledIn(fieldValue, fieldName) {
-  if(fieldValue == '') {
-    window.alert(fieldName + ' is required.')
+  if(fieldValue == "") {
+    window.alert(fieldName + " is required.")
     return false
   }else{
     return true
@@ -109,10 +109,10 @@ function isFormFieldFilledIn(fieldValue, fieldName) {
 
 function isAgeFormFieldValid(formAge) {
   if(isNaN(parseInt(formAge))) {
-    window.alert('Age must be a number.')
+    window.alert("Age must be a number.")
     return false
   }else if(parseInt(formAge) < 1) {
-    window.alert('Age must be greater than 0.')
+    window.alert("Age must be greater than 0.")
     return false
   }else{
     return true
@@ -120,20 +120,20 @@ function isAgeFormFieldValid(formAge) {
 }
 
 Person.prototype.getFormRelationship = function() {
-  var formRel = document.getElementsByName('rel')[0].value;
-  if(isFormFieldFilledIn(formRel, 'Relationship')) {
+  var formRel = document.getElementsByName("rel")[0].value;
+  if(isFormFieldFilledIn(formRel, "Relationship")) {
     this.relationship = formRel
   }
 }
 
 Person.prototype.getFormSmoker = function() {
-  var formSmoker = document.getElementsByName('smoker')[0].checked
+  var formSmoker = document.getElementsByName("smoker")[0].checked
   this.smoker = formSmoker
 }
 
 Person.prototype.addPersonOnTable = function() {
   if(this.age != null && this.relationship != null) {
-    var table = document.getElementById('list');
+    var table = document.getElementById("members");
     var personTableRow = this.buildTableRow();
     table.appendChild(personTableRow);
   }
@@ -148,9 +148,9 @@ Person.prototype.buildTableRow = function() {
   var nodeAge = document.createTextNode(this.age);
   var nodeRel = document.createTextNode(this.relationship);
   var nodeSmoker = document.createTextNode(this.smoker);
-  var button = document.createElement('button');
-  button.innerHTML = 'Remove';
-  button.setAttribute('class', 'remove');
+  var button = document.createElement("button");
+  button.innerHTML = "Remove";
+  button.setAttribute("class", "remove");
   td1.appendChild(nodeAge);
   td2.appendChild(nodeRel);
   td3.appendChild(nodeSmoker);
