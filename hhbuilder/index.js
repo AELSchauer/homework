@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function(event) {
   addButtonClickListener();
-  // submitButtonClickListener();
+  submitButtonClickListener();
   displayMembersTable();
 });
 
@@ -72,10 +72,10 @@ function getFormInfo() {
   return member
 }
 
-function Member() {
-  this.age = null;
-  this.relationship = null;
-  this.smoker = null;
+function Member(age = null, rel = null, smoker = null) {
+  this.age = age;
+  this.relationship = rel;
+  this.smoker = smoker;
 }
 
 function clearForm() {
@@ -158,6 +158,15 @@ Member.prototype.buildTableRow = function() {
   return tr
 }
 
+function submitButtonClickListener() {
+  var submitButton = findSubmitButton();
+  submitButton.addEventListener("click", function(event) {
+    event.preventDefault();
+    var membersJSON = getMembersJSON();
+    submitMembers(membersJSON);
+  });
+}
+
 function findSubmitButton() {
   var buttons = document.getElementsByTagName("button");
   for (var i = 0; i < buttons.length; i++) {
@@ -165,4 +174,34 @@ function findSubmitButton() {
       return buttons[i]
     }
   }
+}
+
+function submitMembers(bodyJSON) {
+  var text = document.createTextNode(bodyJSON);
+  var oldDebug = document.getElementsByClassName('debug')[0]
+  var newDebug = document.createElement('pre')
+  newDebug.setAttribute('class', 'debug')
+  newDebug.appendChild(text)
+  oldDebug.parentNode.replaceChild(newDebug, oldDebug);
+}
+
+function getListOfHouseholdMembersFromTable() {
+  var table = document.getElementById("members");
+  var tbody = table.getElementsByTagName('tbody')[0];
+  var trs = tbody.getElementsByTagName('tr');
+  var trsArr = [].slice.call(trs);
+  var members = trsArr.map(function(tr) {
+    var tds = tr.childNodes
+    return new Member(tds[0].innerHTML, tds[1].innerHTML, tds[2].innerHTML)
+  })
+  return members
+}
+
+function getMembersJSON() {
+  var members = getListOfHouseholdMembersFromTable();
+  return JSON.stringify(
+    { members: members.map(function(member) {
+      return JSON.stringify(member)
+    })
+  })
 }
