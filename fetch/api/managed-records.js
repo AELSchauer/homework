@@ -11,13 +11,14 @@ function retrieve(options = {}) {
   var request = new Request(options)
   fetch(request.uri()).then(function(response){
     return response.json()
-  }).then(function(results) {
-    console.log(options);
-    request.setResults(results)
-    console.log(request.nextPage);
-    return results
+  }).then(function(json) {
+    request.formatResults(json)
+    console.log(options)
+    console.log(request.records)
+    console.log('-------------------------')
+    return json
   }).catch(function(error) {
-    console.log(error)
+    console.log("error")
     return "error"
   });
 }
@@ -42,10 +43,12 @@ Request.prototype.uri = function() {
   return uri.toString()
 }
 
-Request.prototype.setResults = function(resultsJSON) {
-  this.results = resultsJSON;
+Request.prototype.formatResults = function(resultsJSON) {
+  this.json = resultsJSON;
   this.getNextPage();
   this.getPreviousPage();
+  this.processJsonToRecords();
+  // this.getIds();
 }
 
 Request.prototype.getPreviousPage = function() {
@@ -59,12 +62,40 @@ Request.prototype.getPreviousPage = function() {
 Request.prototype.getNextPage = function() {
   if(this.page == undefined) {
     this.nextPage = 2
-  }else if(this.results.length < 11) {
+  }else if(this.json.length < 11) {
     this.nextPage = null
   }else{
     this.nextPage = this.page + 1
   }
 }
 
+Request.prototype.processJsonToRecords = function() {
+  if(this.json.length > 0) {
+    this.records = this.json.splice(0, 10).map(function(record) {
+      record["isPrimary"] = isColorPrimary(record["color"])
+      return record
+    })
+  }else{
+    this.records = []
+  }
+}
+
+function isColorPrimary(color) {
+  if(['red','yellow','blue'].indexOf(color) >= 0) {
+    return true
+  }else{
+    return false
+  }
+}
+
+// Request.prototype.getIds = function() {
+//   if(this.records.length > 0) {
+//     this.ids = this.records.map(function(record) {
+//       return record.id
+//     })
+//   }else{
+//     this.ids = []
+//   }
+// }
 
 export default retrieve;
