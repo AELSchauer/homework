@@ -14,8 +14,9 @@ function retrieve(options = {}) {
   }).then(function(json) {
     request.formatResults(json)
     console.log(options)
-    console.log(request.ids)
-    console.log('-------------------------')
+    console.log(request.open)
+    console.log(request.closedPrimaryCount)
+    console.log("-------------------------")
     return json
   }).catch(function(error) {
     console.log("error")
@@ -49,6 +50,8 @@ Request.prototype.formatResults = function(resultsJSON) {
   this.getPreviousPage();
   this.processJsonToRecords();
   this.getIds();
+  this.getOpenRecords();
+  this.countClosedPrimaryRecords();
 }
 
 Request.prototype.getPreviousPage = function() {
@@ -81,7 +84,7 @@ Request.prototype.processJsonToRecords = function() {
 }
 
 function isColorPrimary(color) {
-  if(['red','yellow','blue'].indexOf(color) >= 0) {
+  if(["red","yellow","blue"].indexOf(color) >= 0) {
     return true
   }else{
     return false
@@ -95,6 +98,26 @@ Request.prototype.getIds = function() {
     })
   }else{
     this.ids = []
+  }
+}
+
+Request.prototype.getOpenRecords = function() {
+  if(this.records.length > 0) {
+    this.open = this.records.filter(function(record) {
+      return record.disposition == "open"
+    })
+  }else{
+    this.open = []
+  }
+}
+
+Request.prototype.countClosedPrimaryRecords = function() {
+  if(this.records.length > 0) {
+    this.closedPrimaryCount = this.records.filter(function(record) {
+      return record.disposition == "closed" && record.isPrimary
+    }).length
+  }else{
+    this.closedPrimaryCount = 0
   }
 }
 
