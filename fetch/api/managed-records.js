@@ -14,7 +14,7 @@ function retrieve(options = {}) {
   }).then(function(json) {
     request.formatResults(json)
     console.log(options)
-    console.log(request.records)
+    console.log(request.ids)
     console.log('-------------------------')
     return json
   }).catch(function(error) {
@@ -48,7 +48,7 @@ Request.prototype.formatResults = function(resultsJSON) {
   this.getNextPage();
   this.getPreviousPage();
   this.processJsonToRecords();
-  // this.getIds();
+  this.getIds();
 }
 
 Request.prototype.getPreviousPage = function() {
@@ -88,14 +88,14 @@ function isColorPrimary(color) {
   }
 }
 
-// Request.prototype.getIds = function() {
-//   if(this.records.length > 0) {
-//     this.ids = this.records.map(function(record) {
-//       return record.id
-//     })
-//   }else{
-//     this.ids = []
-//   }
-// }
+Request.prototype.getIds = function() {
+  if(this.records.length > 0) {
+    this.ids = this.records.map(function(record) {
+      return record.id
+    })
+  }else{
+    this.ids = []
+  }
+}
 
 export default retrieve;
