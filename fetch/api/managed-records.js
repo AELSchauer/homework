@@ -8,28 +8,25 @@ window.path = "http://localhost:3000/records";
 // Your retrieve function plus any additional functions go here ...
 
 function retrieve(options = {}) {
-  var request = new Request(options)
-  fetch(request.uri()).then(function(response){
+  var request = new FetchRequest(options)
+  return fetch(request.uri()).then(function(response){
     return response.json()
   }).then(function(json) {
     request.formatResults(json)
-    console.log(options)
-    console.log(request.open)
-    console.log(request.closedPrimaryCount)
-    console.log("-------------------------")
-    return json
+    return new Promise((resolve, reject) => {
+      resolve(request.formattedResponse);
+    })
   }).catch(function(error) {
-    console.log("error")
-    return "error"
-  });
+    return console.log("There was an error. Please review your request and try again.")
+  })
 }
 
-function Request(options) {
+function FetchRequest(options) {
   this.page = options["page"];
   this.colors = options["colors"];
 }
 
-Request.prototype.uri = function() {
+FetchRequest.prototype.uri = function() {
   var uri = URI(window.path)
   uri.addSearch("limit", "11")
   if(this.page != undefined) {
@@ -44,7 +41,7 @@ Request.prototype.uri = function() {
   return uri.toString()
 }
 
-Request.prototype.formatResults = function(resultsJSON) {
+FetchRequest.prototype.formatResults = function(resultsJSON) {
   this.json = resultsJSON;
   this.getNextPage();
   this.getPreviousPage();
@@ -52,9 +49,10 @@ Request.prototype.formatResults = function(resultsJSON) {
   this.getIds();
   this.getOpenRecords();
   this.countClosedPrimaryRecords();
+  this.formatResponse();
 }
 
-Request.prototype.getPreviousPage = function() {
+FetchRequest.prototype.getPreviousPage = function() {
   if(this.page == undefined || this.page == 1) {
     this.previousPage = null
   }else{
@@ -62,17 +60,17 @@ Request.prototype.getPreviousPage = function() {
   }
 }
 
-Request.prototype.getNextPage = function() {
-  if(this.page == undefined) {
-    this.nextPage = 2
-  }else if(this.json.length < 11) {
+FetchRequest.prototype.getNextPage = function() {
+  if(this.json.length < 11) {
     this.nextPage = null
+  }else if(this.page == undefined) {
+    this.nextPage = 2
   }else{
     this.nextPage = this.page + 1
   }
 }
 
-Request.prototype.processJsonToRecords = function() {
+FetchRequest.prototype.processJsonToRecords = function() {
   if(this.json.length > 0) {
     this.records = this.json.splice(0, 10).map(function(record) {
       record["isPrimary"] = isColorPrimary(record["color"])
@@ -91,7 +89,7 @@ function isColorPrimary(color) {
   }
 }
 
-Request.prototype.getIds = function() {
+FetchRequest.prototype.getIds = function() {
   if(this.records.length > 0) {
     this.ids = this.records.map(function(record) {
       return record.id
@@ -101,7 +99,7 @@ Request.prototype.getIds = function() {
   }
 }
 
-Request.prototype.getOpenRecords = function() {
+FetchRequest.prototype.getOpenRecords = function() {
   if(this.records.length > 0) {
     this.open = this.records.filter(function(record) {
       return record.disposition == "open"
@@ -111,7 +109,7 @@ Request.prototype.getOpenRecords = function() {
   }
 }
 
-Request.prototype.countClosedPrimaryRecords = function() {
+FetchRequest.prototype.countClosedPrimaryRecords = function() {
   if(this.records.length > 0) {
     this.closedPrimaryCount = this.records.filter(function(record) {
       return record.disposition == "closed" && record.isPrimary
@@ -119,6 +117,16 @@ Request.prototype.countClosedPrimaryRecords = function() {
   }else{
     this.closedPrimaryCount = 0
   }
+}
+
+FetchRequest.prototype.formatResponse = function() {
+  var response = {}
+  response["previousPage"] = this.previousPage;
+  response["nextPage"] = this.nextPage;
+  response["ids"] = this.ids;
+  response["open"] = this.open;
+  response["closedPrimaryCount"] = this.closedPrimaryCount;
+  this.formattedResponse = response
 }
 
 export default retrieve;
